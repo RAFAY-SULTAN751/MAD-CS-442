@@ -94,7 +94,17 @@ abstract class Borrowable {
   void borrow();
   void giveBack();
 }
+enum MemberType {
+  student(3, 50),
+  faculty(10, 20),
+  guest(1, 0);
 
+  final int maxLoans;
+  final int discountPercent;
+  const MemberType(this.maxLoans, this.discountPercent);
+
+  int applyDiscount(int fee) => fee - fee * discountPercent ~/ 100;
+}
 
 void main() {
  print('Seed: $seed (t=$t, u=$u)');
@@ -143,7 +153,12 @@ Book book = mainBook();
   print('Step 5: renewed $ok of $renewAttempts attempts (limit $renewLimit)');
   print('Step 5: renew once more? ${book.renew(renewLimit)}');
   print('Step 5: dvd can renew too? ${mainDvd().renew(1)}'); }
-void step6() { print('--- Step 6 ---'); }
+void step6() { print('--- Step 6 ---');
+MemberType type = MemberType.values[seed % 3];
+  int fee = mainBook().lateFee(daysLate);
+  print('Step 6: member type = ${type.name} (index ${type.index})');
+  print('Step 6: max loans = ${type.maxLoans}');
+  print('Step 6: book fee $fee -> ${type.applyDiscount(fee)} after discount'); }
 void step7() { print('--- Step 7 ---'); }
 void step8() { print('--- Step 8 ---'); }
 void step9() { print('--- Step 9 ---'); }
