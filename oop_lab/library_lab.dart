@@ -28,14 +28,25 @@ abstract class LibraryItem {
   int lateFee(int days); // body nahi = promise
 }
 
-class Book extends LibraryItem {
+class Book extends LibraryItem implements Borrowable {
   final int pages;
+  bool _out = false;
   Book(super.title, super.year, this.pages);
-    @override
+
+  @override
   String describe() => '${super.describe()}, $pages pages';
-    @override
+
+  @override
   int lateFee(int days) => days * feePerDay;
-  
+
+  @override
+  bool get isAvailable => !_out;
+
+  @override
+  void borrow() => _out = true;
+
+  @override
+  void giveBack() => _out = false;
 }
 
 Book mainBook() => Book(titles[u], yearOf(u), 100 + 3 * seed);
@@ -69,6 +80,12 @@ Dvd mainDvd() {
   int i = (u + 2) % 10;
   return Dvd(titles[i], yearOf(i), 90 + seed % 40);
 }
+
+abstract class Borrowable {
+  bool get isAvailable;
+  void borrow();
+  void giveBack();
+}
 void main() {
  print('Seed: $seed (t=$t, u=$u)');
  step1();
@@ -95,7 +112,18 @@ void step3() { print('--- Step 3 ---');
 print('Step 3: Book late fee for $daysLate days = ${mainBook().lateFee(daysLate)}');
   print('Step 3: Magazine late fee for $daysLate days = ${mainMagazine().lateFee(daysLate)}');
   print('Step 3: Dvd late fee for $daysLate days = ${mainDvd().lateFee(daysLate)}');}
-void step4() { print('--- Step 4 ---'); }
+void step4() { print('--- Step 4 ---');
+  Book book = mainBook();
+  print('Step 4: available? ${book.isAvailable}');
+  book.borrow();
+  print('Step 4: after borrow? ${book.isAvailable}');
+  book.giveBack();
+  print('Step 4: after return? ${book.isAvailable}');
+
+  List<LibraryItem> items = [book, mainMagazine(), mainDvd()];
+  for (LibraryItem item in items) {
+    print('Step 4: ${item.runtimeType} borrowable? ${item is Borrowable}');
+  } }
 void step5() { print('--- Step 5 ---'); }
 void step6() { print('--- Step 6 ---'); }
 void step7() { print('--- Step 7 ---'); }
