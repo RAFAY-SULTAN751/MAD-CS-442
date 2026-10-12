@@ -6,9 +6,16 @@ final int seed = int.parse(rollNo.substring(rollNo.length - 2));
 final int t = seed ~/ 10; // tens digit
 final int u = seed % 10; // units digit
 const List<String> titles = [
- 'Dart Basics', 'Flutter In Action', 'Data Structures', 'Operating Systems',
- 'Mobile Design', 'Clean Code', 'Algorithms Unlocked', 'Computer Networks',
- 'Database Systems', 'Software Testing',
+  'Dart Basics',
+  'Flutter In Action',
+  'Data Structures',
+  'Operating Systems',
+  'Mobile Design',
+  'Clean Code',
+  'Algorithms Unlocked',
+  'Computer Networks',
+  'Database Systems',
+  'Software Testing',
 ];
 int yearOf(int i) => 1995 + 2 * i + t; // publication year of titles[i]
 final int feePerDay = 5 + t; // late fee per day, in rupees
@@ -33,6 +40,7 @@ List<LibraryItem> buildShelf() {
   }
   return items;
 }
+
 mixin Renewable {
   int renewals = 0;
   bool renew(int limit) {
@@ -41,6 +49,7 @@ mixin Renewable {
     return true;
   }
 }
+
 abstract class LibraryItem {
   final String title;
   final int year;
@@ -56,7 +65,7 @@ abstract class LibraryItem {
   int lateFee(int days);
 }
 
-class Book extends LibraryItem with Renewable implements Borrowable { 
+class Book extends LibraryItem with Renewable implements Borrowable {
   final int pages;
   bool _out = false;
   Book(super.title, super.year, this.pages);
@@ -78,13 +87,14 @@ class Book extends LibraryItem with Renewable implements Borrowable {
 }
 
 Book mainBook() => Book(titles[u], yearOf(u), 100 + 3 * seed);
+
 class Magazine extends LibraryItem {
   final int issue;
   Magazine(super.title, super.year, this.issue);
 
   @override
   String describe() => '${super.describe()}, issue $issue';
-    @override
+  @override
   int lateFee(int days) => days * (feePerDay ~/ 2);
 }
 
@@ -93,7 +103,7 @@ Magazine mainMagazine() {
   return Magazine(titles[i], yearOf(i), 1 + (t + u) % 12);
 }
 
-class Dvd extends LibraryItem with Renewable { 
+class Dvd extends LibraryItem with Renewable {
   final int minutes;
   Dvd(super.title, super.year, this.minutes);
 
@@ -114,6 +124,7 @@ abstract class Borrowable {
   void borrow();
   void giveBack();
 }
+
 enum MemberType {
   student(3, 50),
   faculty(10, 20),
@@ -137,6 +148,7 @@ extension Initials on String {
 extension ShelfMath on List<LibraryItem> {
   int totalLateFee(int days) => fold(0, (sum, i) => sum + i.lateFee(days));
 }
+
 class Fine {
   final int amount;
   const Fine(this.amount);
@@ -153,6 +165,7 @@ class Fine {
   @override
   String toString() => 'Fine($amount)';
 }
+
 class Member {
   final String name;
   final MemberType type;
@@ -167,32 +180,49 @@ class Member {
 }
 
 void main() {
- print('Seed: $seed (t=$t, u=$u)');
- step1();
- step2();
- step3();
- step4();
- step5();
- step6();
- step7();
- step8();
- step9();
- step10();
+  print('Seed: $seed (t=$t, u=$u)');
+  step1();
+  step2();
+  step3();
+  step4();
+  step5();
+  step6();
+  step7();
+  step8();
+  step9();
+  step10();
 }
-void step1() { print('--- Step 1 ---');
-Book b = mainBook();
+
+void step1() {
+  print('--- Step 1 ---');
+  Book b = mainBook();
   LibraryItem item = b;
   print('Step 1: ${b.title} (${b.year}), ${b.pages} pages');
   print('Step 1: stored as LibraryItem: ${item.title}');
-  print('Step 1: runtimeType = ${item.runtimeType}'); }
-void step2() { print('--- Step 2 ---');
-print('Step 2: ${mainBook().describe()}');
-  print('Step 2: ${mainMagazine().describe()}'); }
-void step3() { print('--- Step 3 ---'); 
-print('Step 3: Book late fee for $daysLate days = ${mainBook().lateFee(daysLate)}');
-  print('Step 3: Magazine late fee for $daysLate days = ${mainMagazine().lateFee(daysLate)}');
-  print('Step 3: Dvd late fee for $daysLate days = ${mainDvd().lateFee(daysLate)}');}
-void step4() { print('--- Step 4 ---');
+  print('Step 1: runtimeType = ${item.runtimeType}');
+}
+
+void step2() {
+  print('--- Step 2 ---');
+  print('Step 2: ${mainBook().describe()}');
+  print('Step 2: ${mainMagazine().describe()}');
+}
+
+void step3() {
+  print('--- Step 3 ---');
+  print(
+    'Step 3: Book late fee for $daysLate days = ${mainBook().lateFee(daysLate)}',
+  );
+  print(
+    'Step 3: Magazine late fee for $daysLate days = ${mainMagazine().lateFee(daysLate)}',
+  );
+  print(
+    'Step 3: Dvd late fee for $daysLate days = ${mainDvd().lateFee(daysLate)}',
+  );
+}
+
+void step4() {
+  print('--- Step 4 ---');
   Book book = mainBook();
   print('Step 4: available? ${book.isAvailable}');
   book.borrow();
@@ -203,46 +233,70 @@ void step4() { print('--- Step 4 ---');
   List<LibraryItem> items = [book, mainMagazine(), mainDvd()];
   for (LibraryItem item in items) {
     print('Step 4: ${item.runtimeType} borrowable? ${item is Borrowable}');
-  } }
-void step5() { print('--- Step 5 ---');
-Book book = mainBook();
+  }
+}
+
+void step5() {
+  print('--- Step 5 ---');
+  Book book = mainBook();
   int ok = 0;
   for (int k = 0; k < renewAttempts; k++) {
     if (book.renew(renewLimit)) ok++;
   }
   print('Step 5: renewed $ok of $renewAttempts attempts (limit $renewLimit)');
   print('Step 5: renew once more? ${book.renew(renewLimit)}');
-  print('Step 5: dvd can renew too? ${mainDvd().renew(1)}'); }
-void step6() { print('--- Step 6 ---');
-MemberType type = MemberType.values[seed % 3];
+  print('Step 5: dvd can renew too? ${mainDvd().renew(1)}');
+}
+
+void step6() {
+  print('--- Step 6 ---');
+  MemberType type = MemberType.values[seed % 3];
   int fee = mainBook().lateFee(daysLate);
   print('Step 6: member type = ${type.name} (index ${type.index})');
   print('Step 6: max loans = ${type.maxLoans}');
-  print('Step 6: book fee $fee -> ${type.applyDiscount(fee)} after discount'); }
-void step7() { print('--- Step 7 ---');
-MemberType type = MemberType.values[seed % 3];
+  print('Step 6: book fee $fee -> ${type.applyDiscount(fee)} after discount');
+}
+
+void step7() {
+  print('--- Step 7 ---');
+  MemberType type = MemberType.values[seed % 3];
   int discounted = type.applyDiscount(mainBook().lateFee(daysLate));
   List<LibraryItem> shelf = [mainBook(), mainMagazine(), mainDvd()];
   print('Step 7: ${discounted.rs}');
   print('Step 7: initials of "${titles[u]}" = ${titles[u].initials}');
-  print('Step 7: shelf fee for $daysLate days = ${shelf.totalLateFee(daysLate).rs}'); }
-void step8() { print('--- Step 8 ---'); 
-Fine f1 = Fine(mainBook().lateFee(daysLate));
+  print(
+    'Step 7: shelf fee for $daysLate days = ${shelf.totalLateFee(daysLate).rs}',
+  );
+}
+
+void step8() {
+  print('--- Step 8 ---');
+  Fine f1 = Fine(mainBook().lateFee(daysLate));
   Fine f2 = Fine(mainMagazine().lateFee(daysLate));
   print('Step 8: $f1 + $f2 = ${f1 + f2}');
   print('Step 8: first bigger? ${f1 > f2}');
   print('Step 8: equal copies? ${f1 == Fine(f1.amount)}');
-  print('Step 8: set size = ${{f1, Fine(f1.amount), f2}.length}');}
-void step9() { print('--- Step 9 ---');
-LibraryItem.created = 0;
+  print('Step 8: set size = ${{f1, Fine(f1.amount), f2}.length}');
+}
+
+void step9() {
+  print('--- Step 9 ---');
+  LibraryItem.created = 0;
   buildShelf();
   List<LibraryItem> shelf = buildShelf();
   print('Step 9: items created = ${LibraryItem.created}');
-  print('Step 9: capped fee = ${LibraryItem.capFee(shelf.first.lateFee(daysBig))} (cap $feeCap)');
-  print('Step 9: const copies identical? ${identical(const Fine(10), const Fine(10))}');
-  print('Step 9: new copies identical? ${identical(Fine(10), Fine(10))}'); }
-void step10() { print('--- Step 10 ---'); 
- List<LibraryItem> shelf = buildShelf();
+  print(
+    'Step 9: capped fee = ${LibraryItem.capFee(shelf.first.lateFee(daysBig))} (cap $feeCap)',
+  );
+  print(
+    'Step 9: const copies identical? ${identical(const Fine(10), const Fine(10))}',
+  );
+  print('Step 9: new copies identical? ${identical(Fine(10), Fine(10))}');
+}
+
+void step10() {
+  print('--- Step 10 ---');
+  List<LibraryItem> shelf = buildShelf();
   Member member = Member('S$seed', MemberType.values[seed % 3]);
 
   Fine total = shelf.fold(
@@ -254,4 +308,5 @@ void step10() { print('--- Step 10 ---');
 
   print('Step 10: ${shelf.length} items, $b borrowable, $r renewable');
   print('Step 10: ${member.name} (${member.type.name}) owes $total');
-  print('Step 10: over the cap? ${total > Fine(feeCap)}');}
+  print('Step 10: over the cap? ${total > Fine(feeCap)}');
+}
