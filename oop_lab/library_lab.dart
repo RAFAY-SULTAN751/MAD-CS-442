@@ -19,6 +19,14 @@ final int renewLimit = 1 + t % 3; // renewals allowed per item
 final int renewAttempts = 2 + u; // renewal attempts made in Step 5
 final int shelfSize = 3 + u % 4; // items on the shelf in Steps 9-10
 // ===========================================================================
+mixin Renewable {
+  int renewals = 0;
+  bool renew(int limit) {
+    if (renewals >= limit) return false;
+    renewals++;
+    return true;
+  }
+}
 abstract class LibraryItem {
   final String title;
   final int year;
@@ -28,7 +36,7 @@ abstract class LibraryItem {
   int lateFee(int days); // body nahi = promise
 }
 
-class Book extends LibraryItem implements Borrowable {
+class Book extends LibraryItem with Renewable implements Borrowable { 
   final int pages;
   bool _out = false;
   Book(super.title, super.year, this.pages);
@@ -65,7 +73,7 @@ Magazine mainMagazine() {
   return Magazine(titles[i], yearOf(i), 1 + (t + u) % 12);
 }
 
-class Dvd extends LibraryItem {
+class Dvd extends LibraryItem with Renewable { 
   final int minutes;
   Dvd(super.title, super.year, this.minutes);
 
@@ -86,6 +94,8 @@ abstract class Borrowable {
   void borrow();
   void giveBack();
 }
+
+
 void main() {
  print('Seed: $seed (t=$t, u=$u)');
  step1();
@@ -124,7 +134,15 @@ void step4() { print('--- Step 4 ---');
   for (LibraryItem item in items) {
     print('Step 4: ${item.runtimeType} borrowable? ${item is Borrowable}');
   } }
-void step5() { print('--- Step 5 ---'); }
+void step5() { print('--- Step 5 ---');
+Book book = mainBook();
+  int ok = 0;
+  for (int k = 0; k < renewAttempts; k++) {
+    if (book.renew(renewLimit)) ok++;
+  }
+  print('Step 5: renewed $ok of $renewAttempts attempts (limit $renewLimit)');
+  print('Step 5: renew once more? ${book.renew(renewLimit)}');
+  print('Step 5: dvd can renew too? ${mainDvd().renew(1)}'); }
 void step6() { print('--- Step 6 ---'); }
 void step7() { print('--- Step 7 ---'); }
 void step8() { print('--- Step 8 ---'); }
