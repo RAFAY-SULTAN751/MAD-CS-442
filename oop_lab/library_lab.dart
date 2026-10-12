@@ -19,6 +19,20 @@ final int renewLimit = 1 + t % 3; // renewals allowed per item
 final int renewAttempts = 2 + u; // renewal attempts made in Step 5
 final int shelfSize = 3 + u % 4; // items on the shelf in Steps 9-10
 // ===========================================================================
+List<LibraryItem> buildShelf() {
+  List<LibraryItem> items = [];
+  for (int k = 0; k < shelfSize; k++) {
+    int i = (u + k) % 10;
+    if (k % 3 == 0) {
+      items.add(Book(titles[i], yearOf(i), 100 + 3 * seed));
+    } else if (k % 3 == 1) {
+      items.add(Magazine(titles[i], yearOf(i), 1 + (t + k) % 12));
+    } else {
+      items.add(Dvd(titles[i], yearOf(i), 90 + seed % 40));
+    }
+  }
+  return items;
+}
 mixin Renewable {
   int renewals = 0;
   bool renew(int limit) {
@@ -30,10 +44,16 @@ mixin Renewable {
 abstract class LibraryItem {
   final String title;
   final int year;
-  LibraryItem(this.title, this.year);
+  static int created = 0;
+
+  LibraryItem(this.title, this.year) {
+    created++;
+  }
+
+  static int capFee(int fee) => fee > feeCap ? feeCap : fee;
 
   String describe() => '$title ($year)';
-  int lateFee(int days); // body nahi = promise
+  int lateFee(int days);
 }
 
 class Book extends LibraryItem with Renewable implements Borrowable { 
@@ -201,5 +221,12 @@ Fine f1 = Fine(mainBook().lateFee(daysLate));
   print('Step 8: first bigger? ${f1 > f2}');
   print('Step 8: equal copies? ${f1 == Fine(f1.amount)}');
   print('Step 8: set size = ${{f1, Fine(f1.amount), f2}.length}');}
-void step9() { print('--- Step 9 ---'); }
+void step9() { print('--- Step 9 ---');
+LibraryItem.created = 0;
+  buildShelf();
+  List<LibraryItem> shelf = buildShelf();
+  print('Step 9: items created = ${LibraryItem.created}');
+  print('Step 9: capped fee = ${LibraryItem.capFee(shelf.first.lateFee(daysBig))} (cap $feeCap)');
+  print('Step 9: const copies identical? ${identical(const Fine(10), const Fine(10))}');
+  print('Step 9: new copies identical? ${identical(Fine(10), Fine(10))}'); }
 void step10() { print('--- Step 10 ---'); }
