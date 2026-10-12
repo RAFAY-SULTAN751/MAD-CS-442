@@ -22,16 +22,31 @@ final int shelfSize = 3 + u % 4; // items on the shelf in Steps 9-10
 class LibraryItem {
   final String title;
   final int year;
+    String describe() => '$title ($year)';
   LibraryItem(this.title, this.year);
 }
 
 class Book extends LibraryItem {
   final int pages;
   Book(super.title, super.year, this.pages);
+    @override
+  String describe() => '${super.describe()}, $pages pages';
+  
 }
 
 Book mainBook() => Book(titles[u], yearOf(u), 100 + 3 * seed);
+class Magazine extends LibraryItem {
+  final int issue;
+  Magazine(super.title, super.year, this.issue);
 
+  @override
+  String describe() => '${super.describe()}, issue $issue';
+}
+
+Magazine mainMagazine() {
+  int i = (u + 1) % 10;
+  return Magazine(titles[i], yearOf(i), 1 + (t + u) % 12);
+}
 
 void main() {
  print('Seed: $seed (t=$t, u=$u)');
@@ -52,7 +67,9 @@ Book b = mainBook();
   print('Step 1: ${b.title} (${b.year}), ${b.pages} pages');
   print('Step 1: stored as LibraryItem: ${item.title}');
   print('Step 1: runtimeType = ${item.runtimeType}'); }
-void step2() { print('--- Step 2 ---'); }
+void step2() { print('--- Step 2 ---');
+print('Step 2: ${mainBook().describe()}');
+  print('Step 2: ${mainMagazine().describe()}'); }
 void step3() { print('--- Step 3 ---'); }
 void step4() { print('--- Step 4 ---'); }
 void step5() { print('--- Step 5 ---'); }
