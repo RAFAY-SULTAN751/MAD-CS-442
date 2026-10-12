@@ -153,6 +153,18 @@ class Fine {
   @override
   String toString() => 'Fine($amount)';
 }
+class Member {
+  final String name;
+  final MemberType type;
+  Member(this.name, this.type);
+
+  Fine feeFor(LibraryItem item, int days) {
+    int fee = item.lateFee(days);
+    int capped = LibraryItem.capFee(fee);
+    int discounted = type.applyDiscount(capped);
+    return Fine(discounted);
+  }
+}
 
 void main() {
  print('Seed: $seed (t=$t, u=$u)');
@@ -229,4 +241,17 @@ LibraryItem.created = 0;
   print('Step 9: capped fee = ${LibraryItem.capFee(shelf.first.lateFee(daysBig))} (cap $feeCap)');
   print('Step 9: const copies identical? ${identical(const Fine(10), const Fine(10))}');
   print('Step 9: new copies identical? ${identical(Fine(10), Fine(10))}'); }
-void step10() { print('--- Step 10 ---'); }
+void step10() { print('--- Step 10 ---'); 
+ List<LibraryItem> shelf = buildShelf();
+  Member member = Member('S$seed', MemberType.values[seed % 3]);
+
+  Fine total = shelf.fold(
+    Fine(0),
+    (sum, item) => sum + member.feeFor(item, daysLate),
+  );
+  int b = shelf.where((i) => i is Borrowable).length;
+  int r = shelf.where((i) => i is Renewable).length;
+
+  print('Step 10: ${shelf.length} items, $b borrowable, $r renewable');
+  print('Step 10: ${member.name} (${member.type.name}) owes $total');
+  print('Step 10: over the cap? ${total > Fine(feeCap)}');}
