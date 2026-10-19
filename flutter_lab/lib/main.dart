@@ -76,6 +76,8 @@ class _BuggyCounterState extends State<BuggyCounter> {
   }
 }
 
+
+
 class StudentCard extends StatelessWidget {
   final String name;
   final String roll;
@@ -105,5 +107,3 @@ class StudentCard extends StatelessWidget {
     );
   }
 }
-
-
