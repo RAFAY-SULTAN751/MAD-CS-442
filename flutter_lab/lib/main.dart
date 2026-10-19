@@ -158,12 +158,28 @@ class Tally extends StatefulWidget {
 class _TallyState extends State<Tally> {
   int _count = startCount;
 
+   // Think: hot reload keeps the State, so the count stays 12 (only the new
+  // widget code is applied). Hot restart throws the State away and runs
+  // main() again, so the count goes back to startCount.
   void _plus() {
     setState(() {
       _count += stepSize;
+      if (_count > maxCount) _count = maxCount;
     });
   }
 
+  void _minus() {
+    setState(() {
+      _count -= stepSize;
+      if (_count < 0) _count = 0;
+    });
+  }
+
+  void _reset() {
+    setState(() {
+      _count = startCount;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -173,10 +189,22 @@ class _TallyState extends State<Tally> {
         GoalBanner(count: _count, max: maxCount),
         Row(
           children: [
-            ElevatedButton(
+                        ElevatedButton(
               key: const Key('plus'),
               onPressed: _plus,
               child: Text('+$stepSize'),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              key: const Key('minus'),
+              onPressed: _minus,
+              child: Text('-$stepSize'),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton(
+              key: const Key('reset'),
+              onPressed: _reset,
+              child: const Text('Reset'),
             ),
           ],
         ),
