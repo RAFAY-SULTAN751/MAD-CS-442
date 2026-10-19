@@ -50,6 +50,7 @@ class HomePage extends StatelessWidget {
           children: [
             StudentCard(name: studentName, roll: rollNo, course: course),
             const SizedBox(height: 12),
+            GoalBanner(count: startCount, max: maxCount),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -122,6 +123,24 @@ class StudentCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+// Stateless: it only displays the count and max it was given.
+// Think: it has no state of its own, so it never calls setState. To show a
+// new count, its parent must rebuild it with a new count value.
+class GoalBanner extends StatelessWidget {
+  final int count;
+  final int max;
+
+  const GoalBanner({super.key, required this.count, required this.max});
+
+  @override
+  Widget build(BuildContext context) {
+    final percent = count * 100 ~/ max;
+    return Text(
+      'Progress: $count of $max ($percent%)',
+      key: const Key('progress'),
     );
   }
 }
