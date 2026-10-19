@@ -220,20 +220,15 @@ class _TallyState extends State<Tally> {
   }
 }
 
-class Countdown extends StatefulWidget {
-  const Countdown({super.key});
-
-  @override
-  State<Countdown> createState() => _CountdownState();
-}
-
 class _CountdownState extends State<Countdown> {
   late int _left;
   late Timer _timer;
+  int _builds = 0; // CHANGE 1: naya field
 
   @override
   void initState() {
     super.initState();
+    lifecycleLog.add('initState'); // CHANGE 2: super.initState() ke turant baad
     _left = startSeconds;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() => _left--);
@@ -247,13 +242,26 @@ class _CountdownState extends State<Countdown> {
     // removed and setState() is called on a disposed State, which gives
     // "setState() called after dispose()" in the console.
     _timer.cancel();
+    lifecycleLog.add('dispose'); // CHANGE 3: super.dispose() se pehle
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _left > 0
-        ? Text('Time left: $_left s', key: const Key('time-left'))
-        : const Text('Time is up!', key: Key('time-left'));
+    // CHANGE 4: build ka pura content replace
+    // Think: build runs once per setState, and the timer calls setState once
+    // per second, so Builds goes up by one (not two) each second.
+    // lifecycleLog can be printed with debugPrint(lifecycleLog.toString())
+    // inside dispose to prove that dispose ran.
+    _builds++;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _left > 0
+            ? Text('Time left: $_left s', key: const Key('time-left'))
+            : const Text('Time is up!', key: Key('time-left')),
+        Text('Builds: $_builds', key: const Key('builds')),
+      ],
+    );
   }
 }
