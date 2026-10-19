@@ -49,8 +49,10 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             StudentCard(name: studentName, roll: rollNo, course: course),
-             const SizedBox(height: 12),
+              const SizedBox(height: 12),
             const Tally(),
+            const SizedBox(height: 12),
+            const BuggyCounter(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -79,6 +81,9 @@ class _BuggyCounterState extends State<BuggyCounter> {
 
   @override
   Widget build(BuildContext context) {
+    // Think: before the fix, after 3 taps _clicks inside the State was 12
+    // (3 * bugStep = 3 * 4), but the screen still showed 0 because no
+    // rebuild was requested.
     return Row(
       children: [
         Text('Bug clicks: $_clicks', key: const Key('bug-text')),
@@ -86,7 +91,9 @@ class _BuggyCounterState extends State<BuggyCounter> {
         ElevatedButton(
           key: const Key('bug-button'),
           onPressed: () {
-            _clicks += bugStep;
+            setState(() {
+              _clicks += bugStep;
+            });
           },
           child: Text('+$bugStep'),
         ),
@@ -94,8 +101,6 @@ class _BuggyCounterState extends State<BuggyCounter> {
     );
   }
 }
-
-
 
 class StudentCard extends StatelessWidget {
   final String name;
