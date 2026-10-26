@@ -114,9 +114,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 12),
 Row(
   children: [
-    Tile(tileA),
-    Tile(tileB),
-    Tile(tileC),
+   const SwapBoard(),
   ],
 ),
 const SizedBox(height: 12),
@@ -305,6 +303,39 @@ class _TileState extends State<Tile> {
         setState(() => taps++);
       },
       child: Text('${widget.label}: $taps'),
+    );
+  }
+}
+
+class SwapBoard extends StatefulWidget {
+  const SwapBoard({super.key});
+
+  @override
+  State<SwapBoard> createState() => _SwapBoardState();
+}
+
+class _SwapBoardState extends State<SwapBoard> {
+  var tiles = [
+    Tile(tileA, key: ValueKey(tileA)),
+    Tile(tileB, key: ValueKey(tileB)),
+    Tile(tileC, key: ValueKey(tileC)),
+  ];
+
+  void swap() => setState(() {
+        tiles = tiles.reversed.toList();
+      });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(children: tiles),
+        ElevatedButton(
+          key: const Key('swap'),
+          onPressed: swap,
+          child: const Text('Swap'),
+        ),
+      ],
     );
   }
 }
