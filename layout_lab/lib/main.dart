@@ -215,9 +215,48 @@ Widget build(BuildContext context) {
         'Builds: $_builds',
         key: const Key('builds'),
       ),
+        Probe(seconds: _seconds),
     ],
   );
 }
   // Think: Start the timer in initState so it starts only once.
   // Starting it in build would create extra timers on rebuilds.
+}
+
+class Probe extends StatelessWidget {
+  final int seconds;
+
+  const Probe({super.key, required this.seconds});
+
+  @override
+  Widget build(BuildContext context) {
+    final above =
+        context.findAncestorWidgetOfExactType<Scaffold>() != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Seen at: $seconds s',
+          key: const Key('probe-seen'),
+        ),
+        Text(
+          'Widget #${identityHashCode(this)}',
+          key: const Key('probe-widget'),
+        ),
+        Text(
+          'Element #${identityHashCode(context)}',
+          key: const Key('probe-element'),
+        ),
+        Text(
+          'Context belongs to: ${context.widget.runtimeType}',
+          key: const Key('probe-context'),
+        ),
+        Text(
+          'Scaffold above me: $above',
+          key: const Key('probe-above'),
+        ),
+      ],
+    );
+  }
 }
