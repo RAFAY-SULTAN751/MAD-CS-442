@@ -108,6 +108,7 @@ class HomePage extends StatelessWidget {
           children: [
             const SettingsCard(),
             const SizedBox(height: 12),
+            const Clock(),
          
 
             // Add each new widget BELOW the previous one, in the order the
@@ -163,4 +164,41 @@ class SummaryRow extends StatelessWidget {
       ],
     );
   }
+}
+
+class Clock extends StatefulWidget {
+  const Clock({super.key});
+
+  @override
+  _ClockState createState() => _ClockState();
+}
+
+class _ClockState extends State<Clock> {
+  late Timer _timer;
+  int _seconds = startSec;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        setState(() => _seconds += tick);
+
+        if (_seconds >= stopAt) timer.cancel();
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'Session: $_seconds s',
+      key: const Key('clock'),
+    );
+  }
+
+  // Think: Start the timer in initState so it starts only once.
+  // Starting it in build would create extra timers on rebuilds.
 }
