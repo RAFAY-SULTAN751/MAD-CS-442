@@ -106,7 +106,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             const Welcome(),
+            const Welcome(),
             const SizedBox(height: 12),
             const SettingsCard(),
             const SizedBox(height: 12),
@@ -117,16 +117,13 @@ class HomePage extends StatelessWidget {
             const SummaryRow(),
             const SizedBox(height: 12),
             const ShareRow(),
-             const SizedBox(height: 12),
-             const InfoBox(),
-              const SizedBox(height: 12),
-Row(
-  children: [
-   const SwapBoard(),
-  ],
-),
-const SizedBox(height: 12),
-         
+            const SizedBox(height: 12),
+            const InfoBox(),
+            const SizedBox(height: 12),
+            const StampStack(),
+            const SizedBox(height: 12),
+            Row(children: [const SwapBoard()]),
+            const SizedBox(height: 12),
 
             // Add each new widget BELOW the previous one, in the order the
             // steps tell you, with a SizedBox(height: 12) between widgets.
@@ -167,23 +164,23 @@ class SummaryRow extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-  child: Text(
-    'Part A: read the widget tree of the $course board from top to bottom.',
-    key: const Key('sum-a'),
-  ),
-),
+          child: Text(
+            'Part A: read the widget tree of the $course board from top to bottom.',
+            key: const Key('sum-a'),
+          ),
+        ),
         Expanded(
-  child: Text(
-    'Part B: read the widget tree of the $course board from top to bottom.',
-    key: const Key('sum-b'),
-  ),
-),
+          child: Text(
+            'Part B: read the widget tree of the $course board from top to bottom.',
+            key: const Key('sum-b'),
+          ),
+        ),
         Expanded(
-  child: Text(
-    'Part C: read the widget tree of the $course board from top to bottom.',
-    key: const Key('sum-c'),
-  ),
-),
+          child: Text(
+            'Part C: read the widget tree of the $course board from top to bottom.',
+            key: const Key('sum-c'),
+          ),
+        ),
       ],
     );
   }
@@ -202,46 +199,39 @@ class _ClockState extends State<Clock> {
   int _builds = 0;
 
   @override
-void initState() {
-  super.initState();
-  lifecycleLog.add('initState');
+  void initState() {
+    super.initState();
+    lifecycleLog.add('initState');
 
-  _timer = Timer.periodic(
-    const Duration(seconds: 1),
-    (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() => _seconds += tick);
 
       if (_seconds >= stopAt) {
         timer.cancel();
       }
-    },
-  );
-}
-@override
-void dispose() {
-  _timer.cancel();
-  lifecycleLog.add('dispose');
-  super.dispose();
-}
- @override
-Widget build(BuildContext context) {
-  _builds++;
+    });
+  }
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        'Session: $_seconds s',
-        key: const Key('clock'),
-      ),
-      Text(
-        'Builds: $_builds',
-        key: const Key('builds'),
-      ),
+  @override
+  void dispose() {
+    _timer.cancel();
+    lifecycleLog.add('dispose');
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _builds++;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Session: $_seconds s', key: const Key('clock')),
+        Text('Builds: $_builds', key: const Key('builds')),
         Probe(seconds: _seconds),
-    ],
-  );
-}
+      ],
+    );
+  }
   // Think: Start the timer in initState so it starts only once.
   // Starting it in build would create extra timers on rebuilds.
 }
@@ -253,16 +243,12 @@ class Probe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final above =
-        context.findAncestorWidgetOfExactType<Scaffold>() != null;
+    final above = context.findAncestorWidgetOfExactType<Scaffold>() != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Seen at: $seconds s',
-          key: const Key('probe-seen'),
-        ),
+        Text('Seen at: $seconds s', key: const Key('probe-seen')),
         Text(
           'Widget #${identityHashCode(this)}',
           key: const Key('probe-widget'),
@@ -275,10 +261,7 @@ class Probe extends StatelessWidget {
           'Context belongs to: ${context.widget.runtimeType}',
           key: const Key('probe-context'),
         ),
-        Text(
-          'Scaffold above me: $above',
-          key: const Key('probe-above'),
-        ),
+        Text('Scaffold above me: $above', key: const Key('probe-above')),
       ],
     );
   }
@@ -290,10 +273,7 @@ class Welcome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        'Welcome, $studentName',
-        key: const Key('welcome'),
-      ),
+      child: Text('Welcome, $studentName', key: const Key('welcome')),
     );
   }
 }
@@ -336,8 +316,8 @@ class _SwapBoardState extends State<SwapBoard> {
   ];
 
   void swap() => setState(() {
-        tiles = tiles.reversed.toList();
-      });
+    tiles = tiles.reversed.toList();
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -397,10 +377,7 @@ class ShareRow extends StatelessWidget {
         SizedBox(
           key: const Key('fixed'),
           width: fixedW,
-          child: ElevatedButton(
-            onPressed: () {},
-            child: const Text('F'),
-          ),
+          child: ElevatedButton(onPressed: () {}, child: const Text('F')),
         ),
         Expanded(
           flex: flexA,
@@ -437,10 +414,36 @@ class InfoBox extends StatelessWidget {
         borderRadius: BorderRadius.circular(boxRadius),
         border: Border.all(width: boxBorder),
       ),
-      child: Text(
-        'Course: $course',
-        key: const Key('box-text'),
-      ),
+      child: Text('Course: $course', key: const Key('box-text')),
+    );
+  }
+}
+
+class StampStack extends StatelessWidget {
+  const StampStack({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      key: const Key('stack'),
+      children: [
+        Container(
+          key: const Key('layer-base'),
+          width: 300,
+          height: 120,
+          color: Colors.grey.shade300,
+        ),
+        Positioned(
+          top: dotTop,
+          right: dotRight,
+          child: const Icon(Icons.star, key: Key('dot-top')),
+        ),
+        Positioned(
+          bottom: dotBottom,
+          left: dotLeft,
+          child: const Icon(Icons.circle, key: Key('dot-bottom')),
+        ),
+      ],
     );
   }
 }
