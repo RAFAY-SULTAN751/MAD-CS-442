@@ -176,29 +176,48 @@ class Clock extends StatefulWidget {
 class _ClockState extends State<Clock> {
   late Timer _timer;
   int _seconds = startSec;
+  int _builds = 0;
 
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
+  lifecycleLog.add('initState');
 
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) {
-        setState(() => _seconds += tick);
+  _timer = Timer.periodic(
+    const Duration(seconds: 1),
+    (timer) {
+      setState(() => _seconds += tick);
 
-        if (_seconds >= stopAt) timer.cancel();
-      },
-    );
-  }
+      if (_seconds >= stopAt) {
+        timer.cancel();
+      }
+    },
+  );
+}
+@override
+void dispose() {
+  _timer.cancel();
+  lifecycleLog.add('dispose');
+  super.dispose();
+}
+ @override
+Widget build(BuildContext context) {
+  _builds++;
 
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Session: $_seconds s',
-      key: const Key('clock'),
-    );
-  }
-
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Session: $_seconds s',
+        key: const Key('clock'),
+      ),
+      Text(
+        'Builds: $_builds',
+        key: const Key('builds'),
+      ),
+    ],
+  );
+}
   // Think: Start the timer in initState so it starts only once.
   // Starting it in build would create extra timers on rebuilds.
 }
